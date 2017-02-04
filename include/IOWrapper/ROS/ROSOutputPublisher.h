@@ -1,6 +1,6 @@
 /**
 * This file is part of DSO.
-* 
+*
 * Copyright 2016 Technical University of Munich and Intel.
 * Developed by Jakob Engel <engelj at in dot tum dot de>,
 * for more information see <http://vision.in.tum.de/dso>.
@@ -21,64 +21,66 @@
 * along with DSO. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #pragma once
 #include "Eigen/Core"
+#include "IOWrapper/Output3DWrapper.h"
 #include "boost/thread.hpp"
 #include "util/MinimalImage.h"
-#include "IOWrapper/Output3DWrapper.h"
 
 #include "FullSystem/HessianBlocks.h"
 #include "util/FrameShell.h"
 
-#include <ros/ros.h>
 #include <ros/console.h>
+#include <ros/duration.h>
+#include <ros/ros.h>
+
 #include <tf/transform_broadcaster.h>
+#include <tf/transform_datatypes.h>
+#include <tf/transform_listener.h>
 
 namespace dso
 {
-
 class FrameHessian;
 class CalibHessian;
 class FrameShell;
 
-
 namespace IOWrap
 {
-
 class ROSOutputPublisher : public Output3DWrapper
 {
 private:
-	/* TODO publish dso pointcloud */
+  /* TODO publish dso pointcloud */
 
-	/* camera frame id */
-	std::string world_frame_id;
-	std::string camera_frame_id;
+  /* camera frame id */
+  std::string dso_frame_id;
+  std::string camera_frame_id;
+  std::string odom_frame_id;
+  std::string base_frame_id;
+  /* dso odometry_msg */
+  ros::Publisher dso_odom_pub;
+
+  tf::TransformListener tf_list;
+  tf::TransformBroadcaster tf_broadcast;
 
 public:
-        ROSOutputPublisher(ros::NodeHandle dso_node);
-        
-        virtual ~ROSOutputPublisher();
+  explicit ROSOutputPublisher(ros::NodeHandle dso_node);
 
-        virtual void publishGraph(const std::map<long,Eigen::Vector2i> &connectivity);
-       
-        virtual void publishKeyframes( std::vector<FrameHessian*> &frames, bool final, CalibHessian* HCalib);
-        
-        virtual void publishCamPose(FrameShell* frame, CalibHessian* HCalib);
+  virtual ~ROSOutputPublisher();
 
-        virtual void pushLiveFrame(FrameHessian* image);
-       
-        virtual void pushDepthImage(MinimalImageB3* image);
-       
-	virtual bool needPushDepthImage();
-        
-        virtual void pushDepthImageFloat(MinimalImageF* image, FrameHessian* KF );
+  virtual void publishGraph(const std::map<long, Eigen::Vector2i>& connectivity);
+
+  virtual void publishKeyframes(std::vector<FrameHessian*>& frames, bool final,
+                                CalibHessian* HCalib);
+
+  virtual void publishCamPose(FrameShell* frame, CalibHessian* HCalib);
+
+  virtual void pushLiveFrame(FrameHessian* image);
+
+  virtual void pushDepthImage(MinimalImageB3* image);
+
+  virtual bool needPushDepthImage();
+
+  virtual void pushDepthImageFloat(MinimalImageF* image, FrameHessian* KF);
 };
-
-
-
 }
-
-
-
 }

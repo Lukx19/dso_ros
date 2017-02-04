@@ -4,6 +4,7 @@ project(dso_ros)
 find_package(catkin REQUIRED COMPONENTS
   std_msgs
   geometry_msgs
+  nav_msgs
   roscpp
   sensor_msgs
   cv_bridge
@@ -29,6 +30,7 @@ find_library(DSO_LIBRARY dso ${DSO_PATH}/build/lib)
 catkin_package(
   CATKIN_DEPENDS
     geometry_msgs
+    nav_msgs
     roscpp
     sensor_msgs
     cv_bridge
