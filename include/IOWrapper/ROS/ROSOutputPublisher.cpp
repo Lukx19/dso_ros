@@ -57,7 +57,7 @@ ROSOutputPublisher::ROSOutputPublisher(ros::NodeHandle dso_node)
   ROS_INFO_STREAM("camera_frame = " << camera_frame_id << "\n");
   dso_frame_id = "dso_odom";
   dso_odom_pub =
-      dso_node.advertise<nav_msgs::Odometry>("dso_odom_topic", 5, false);
+      dso_node.advertise<nav_msgs::Odometry>("odom", 5, false);
 }
 
 ROSOutputPublisher::~ROSOutputPublisher()

@@ -1,0 +1,9 @@
+<launch>
+    <arg name="dso_args"/>
+    <group ns="dso">
+        <node pkg="robot_localization" type="ekf_localization_node" name="ekf_se" clear_params="true">
+            <rosparam command="load" file="$(find dso_ros)/params/ekf_robot_localization.yaml"/>
+        </node>
+        <node pkg="dso_ros" type="dso_live" args="$(arg dso_args)" name="dso_ros" output="screen"/>
+    </group>
+</launch>
