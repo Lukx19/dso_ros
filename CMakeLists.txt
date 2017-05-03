@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.4.6)
 project(dso_ros)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules/")
+
 find_package(catkin REQUIRED COMPONENTS
   std_msgs
   geometry_msgs
@@ -11,21 +13,11 @@ find_package(catkin REQUIRED COMPONENTS
   tf
 )
 
-set(DSO_PATH $ENV{DSO_PATH})
-message("\n\n---- LOOKING FOR DSO at\n\"${DSO_PATH}\"")
-
-
+find_package(Dso REQUIRED)
 find_package(Pangolin 0.2 REQUIRED)
-message("\n\n---- FOUND Pangolin Headers at\n\"${Pangolin_INCLUDE_DIRS}\"")
-message("---- FOUND Pangolin Libs at\n\"${Pangolin_LIBRARIES}\"")
-
 find_package(OpenCV REQUIRED)
-message("\n\n---- FOUND OpenCV Headers at\n\"${OpenCV_INCLUDE_DIRS}\"")
-message("---- FOUND OpenCV Libs at\n\"${OpenCV_LIBS}\"")
-
 find_package(Eigen3 REQUIRED)
 find_package(Boost COMPONENTS system thread)
-find_library(DSO_LIBRARY dso ${DSO_PATH}/build/lib)
 
 catkin_package(
   CATKIN_DEPENDS
@@ -51,20 +43,27 @@ set(ros_IOWrapper_source
 include_directories(
   include
   ${PROJECT_SOURCE_DIR}/src
-  ${DSO_PATH}/src
-  ${DSO_PATH}/thirdparty/Sophus
+  ${DSO_INCLUDE_DIRS}
   ${Pangolin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIR}
   ${catkin_INCLUDE_DIRS}
 )
+# link_directories( ${DSO_LIBRARIES})
+# link_libraries(${DSO_LIBRARIES})
 
 ## Declare a C++ executable
-add_executable(dso_live src/main.cpp)
+#add_executable(dso_live src/main.cpp ${ros_IOWrapper_source})
 
-add_library(ros_IOWrapper ${ros_IOWrapper_source})
+#target_link_libraries(dso_live ros_IOWrapper
+#    ${DSO_LIBRARIES}
+#    ${Pangolin_LIBRARIES}
+#    ${OpenCV_LIBS}
+#    ${catkin_LIBRARIES})
 
-target_link_libraries(dso_live ros_IOWrapper
-    ${DSO_LIBRARY}
+add_executable(dso_node src/dso_node.cpp src/ros_output_wrapper.cpp)
+
+target_link_libraries(dso_node
+    ${DSO_LIBRARIES}
     ${Pangolin_LIBRARIES}
     ${OpenCV_LIBS}
     ${catkin_LIBRARIES})

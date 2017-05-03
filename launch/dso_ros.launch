@@ -1,0 +1,13 @@
+<launch>
+  <group ns="dso">
+    <node pkg="dso_ros" type="dso_node" name="dso_ros" output="screen">
+        <remap from="image" to="/image_raw"/>
+        <param name="debug" type="bool" value="true"/>
+        <param name="display_GUI" type="bool" value="true"/>
+
+        <param name="calib_file_path" type="string" value=""/>
+        <param name="vignette_file_path" type="string" value=""/>
+        <param name="gamma_file_path" type="string" value=""/>
+    </node>
+ </group>
+</launch>
