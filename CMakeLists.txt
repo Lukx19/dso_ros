@@ -48,18 +48,6 @@ include_directories(
   ${EIGEN3_INCLUDE_DIR}
   ${catkin_INCLUDE_DIRS}
 )
-# link_directories( ${DSO_LIBRARIES})
-# link_libraries(${DSO_LIBRARIES})
-
-## Declare a C++ executable
-#add_executable(dso_live src/main.cpp ${ros_IOWrapper_source})
-
-#target_link_libraries(dso_live ros_IOWrapper
-#    ${DSO_LIBRARIES}
-#    ${Pangolin_LIBRARIES}
-#    ${OpenCV_LIBS}
-#    ${catkin_LIBRARIES})
-
 add_executable(dso_node src/dso_node.cpp src/ros_output_wrapper.cpp)
 
 target_link_libraries(dso_node

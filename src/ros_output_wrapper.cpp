@@ -5,20 +5,19 @@ using namespace dso_ros;
 ROSOutputWrapper::ROSOutputWrapper(ros::NodeHandle& n,
                                    ros::NodeHandle& n_private)
 {
-  ROS_INFO("ROSOutputPublisher created\n");
+  ROS_INFO("ROSOutputWrapper created\n");
   if (!n_private.hasParam("dso_frame_id")) {
-    ROS_INFO("No param named world_frame found!");
+    ROS_WARN("No param named world_frame found!");
   }
   if (!n_private.hasParam("camera_frame_id")) {
-    ROS_INFO("No param named camera_frame found!");
+    ROS_WARN("No param named camera_frame found!");
   }
   n_private.param<std::string>("dso_frame_id", dso_frame_id_, "dso_odom");
   n_private.param<std::string>("camera_frame_id", camera_frame_id_, "camera");
   n_private.param<std::string>("odom_frame_id", odom_frame_id_, "odom");
   n_private.param<std::string>("base_frame_id", odom_frame_id_, "base_link");
-  ROS_INFO_STREAM("world_frame = " << dso_frame_id_ << "\n");
-  ROS_INFO_STREAM("camera_frame = " << camera_frame_id_ << "\n");
-  dso_frame_id_ = "dso_odom";
+  ROS_INFO_STREAM("world_frame_id = " << dso_frame_id_ << "\n");
+  ROS_INFO_STREAM("camera_frame_id = " << camera_frame_id_ << "\n");
   dso_odom_pub_ = n.advertise<nav_msgs::Odometry>("odom", 5, false);
   //  dso_depht_image_pub_ = n.advertise<>s
 }
@@ -74,6 +73,7 @@ void ROSOutputWrapper::publishKeyframes(std::vector<dso::FrameHessian*>& frames,
 void ROSOutputWrapper::publishCamPose(dso::FrameShell* frame,
                                       dso::CalibHessian* HCalib)
 {
+  ROS_DEBUG_STREAM("publishCamPose called");
   tf::StampedTransform tf_odom_base;
   tf::StampedTransform tf_base_cam;
   try {
@@ -137,8 +137,8 @@ void ROSOutputWrapper::publishCamPose(dso::FrameShell* frame,
   br.sendTransform(tf::StampedTransform(transform, ros::Time::now(),
                                         dso_frame_id_, odom_frame_id_));
 
-  ROS_INFO_STREAM("ROSOutputPublisher:" << base_frame_id_ << "->"
-                                        << dso_frame_id_ << " tf broadcasted");
+  ROS_INFO_STREAM("ROSOutputWrapper:" << base_frame_id_ << "->" << dso_frame_id_
+                                      << " tf broadcasted");
   nav_msgs::Odometry odom;
   odom.header.stamp = ros::Time::now();
   odom.header.frame_id = dso_frame_id_;
@@ -161,7 +161,7 @@ void ROSOutputWrapper::pushDepthImage(dso::MinimalImageB3* image)
 }
 bool ROSOutputWrapper::needPushDepthImage()
 {
-  return true;
+  return false;
 }
 
 void ROSOutputWrapper::pushDepthImageFloat(dso::MinimalImageF* image,

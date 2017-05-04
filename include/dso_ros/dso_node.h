@@ -50,7 +50,7 @@ private:
   std::unique_ptr<dso::FullSystem> full_system_;
   std::unique_ptr<dso::Undistort> undistorter_;
 
-  size_t frame_ID_;
+  int frame_ID_;
 
   std::string calib_file_;
   std::string vignette_file_;

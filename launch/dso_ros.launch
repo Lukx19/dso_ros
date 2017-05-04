@@ -8,6 +8,11 @@
         <param name="calib_file_path" type="string" value=""/>
         <param name="vignette_file_path" type="string" value=""/>
         <param name="gamma_file_path" type="string" value=""/>
+
+        <param name="dso_frame_id" type="string" value="dso_odom"/>
+        <param name="odom_frame_id" type="string" value="odom"/>
+        <param name="base_frame_id" type="string" value="base_link"/>
+        <param name="camera_frame_id" type="string" value="base_link"/>
     </node>
  </group>
 </launch>

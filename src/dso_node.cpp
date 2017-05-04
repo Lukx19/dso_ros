@@ -5,9 +5,10 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "dso_node");
   ros::NodeHandle nh;
   ros::NodeHandle nh_private("~");
-
+  ros::MultiThreadedSpinner spinner(2);
   dso_ros::DsoNode node(nh, nh_private);
-  node.run();
+  spinner.spin();
+  // node.run();
   return 0;
 }
 
@@ -23,7 +24,7 @@ dso_ros::DsoNode::DsoNode(ros::NodeHandle &n, ros::NodeHandle &n_private)
   , image_sub_()
 {
   image_sub_ = n.subscribe<sensor_msgs::Image>(
-      "image", 1, boost::bind(&dso_ros::DsoNode::imageCb, this, _1));
+      "image", 50, boost::bind(&dso_ros::DsoNode::imageCb, this, _1));
   initParams();
 
   undistorter_.reset(dso::Undistort::getUndistorterForFile(
@@ -45,6 +46,11 @@ dso_ros::DsoNode::~DsoNode()
 
 void dso_ros::DsoNode::imageCb(const sensor_msgs::ImageConstPtr &img)
 {
+  // this is needed to avoid initial freeze of whole algorithm. I don't know why
+  // it needs couple initial frames to make reset function.
+  if (frame_ID_ == 3) {
+    reset();
+  }
   cv_bridge::CvImagePtr cv_ptr =
       cv_bridge::toCvCopy(img, sensor_msgs::image_encodings::MONO8);
   assert(cv_ptr->image.type() == CV_8U);
@@ -52,6 +58,9 @@ void dso_ros::DsoNode::imageCb(const sensor_msgs::ImageConstPtr &img)
 
   if (dso::setting_fullResetRequested) {
     ROS_ERROR_STREAM("[DSO_ROS]: System reset requested from DSO");
+    reset();
+  } else if (full_system_->initFailed) {
+    ROS_ERROR_STREAM("[DSO_ROS]: DSO init failed");
     reset();
   }
 
@@ -105,6 +114,7 @@ void dso_ros::DsoNode::initIOWrappers()
 
 void dso_ros::DsoNode::reset()
 {
+  ROS_DEBUG_STREAM("[DSO_ROS]: Reseting DSO system");
   std::vector<dso::IOWrap::Output3DWrapper *> wraps =
       full_system_->outputWrapper;
 

@@ -44,10 +44,6 @@
 
 namespace dso_ros
 {
-// class dso::FrameHessian;
-// class dso::CalibHessian;
-// class dso::FrameShell;
-
 class ROSOutputWrapper : public dso::IOWrap::Output3DWrapper
 {
 public:
@@ -55,22 +51,23 @@ public:
 
   virtual ~ROSOutputWrapper();
 
-  virtual void publishGraph(const std::map<long, Eigen::Vector2i>& connectivity);
+  virtual void
+  publishGraph(const std::map<long, Eigen::Vector2i>& connectivity) override;
 
   virtual void publishKeyframes(std::vector<dso::FrameHessian*>& frames,
-                                bool final, dso::CalibHessian* HCalib);
+                                bool final, dso::CalibHessian* HCalib) override;
 
   virtual void publishCamPose(dso::FrameShell* frame,
-                              dso::CalibHessian* HCalib);
+                              dso::CalibHessian* HCalib) override;
 
-  virtual void pushLiveFrame(dso::FrameHessian* image);
+  virtual void pushLiveFrame(dso::FrameHessian* image) override;
 
-  virtual void pushDepthImage(dso::MinimalImageB3* image);
+  virtual void pushDepthImage(dso::MinimalImageB3* image) override;
 
-  virtual bool needPushDepthImage();
+  virtual bool needPushDepthImage() override;
 
   virtual void pushDepthImageFloat(dso::MinimalImageF* image,
-                                   dso::FrameHessian* KF);
+                                   dso::FrameHessian* KF) override;
 
 private:
   /* camera frame id */
