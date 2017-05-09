@@ -51,9 +51,6 @@ public:
 
   virtual ~ROSOutputWrapper();
 
-  virtual void
-  publishGraph(const std::map<long, Eigen::Vector2i>& connectivity) override;
-
   virtual void publishKeyframes(std::vector<dso::FrameHessian*>& frames,
                                 bool final, dso::CalibHessian* HCalib) override;
 

@@ -20,20 +20,20 @@ IF(UNIX)
     NAMES IOWrapper FullSystem
     PATHS /usr/local /usr $ENV{DSO_PATH}
     PATH_SUFFIXES src dso/src)
-  
+
   FIND_PATH(DSO_INCLUDE_SOPHUS
     NAMES sophus
     PATHS /usr/local /usr $ENV{DSO_PATH}
     PATH_SUFFIXES thirdparty/Sophus dso/thirdparty/Sophus)
 
   SET(DSO_INCLUDE_DIRS ${DSO_INCLUDE_CORE} ${DSO_INCLUDE_SOPHUS})
-  
+
   IF (DSO_INCLUDE_DIRS)
     MESSAGE(STATUS "Found DSO headers in: ${DSO_INCLUDE_DIRS}")
   ENDIF (DSO_INCLUDE_DIRS)
 
   FIND_LIBRARY(DSO_CORE_LIB
-    NAMES libdso
+    NAMES dso
     PATHS /usr/local /usr $ENV{DSO_PATH}
     PATH_SUFFIXES build/lib dso/build/lib)
   SET(DSO_LIBRARIES ${DSO_CORE_LIB})

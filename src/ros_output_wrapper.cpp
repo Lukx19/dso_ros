@@ -27,24 +27,6 @@ ROSOutputWrapper::~ROSOutputWrapper()
   ROS_INFO("ROSOutputPublisher destroyed\n");
 }
 
-void ROSOutputWrapper::publishGraph(
-    const std::map<long, Eigen::Vector2i>& connectivity)
-{
-  printf("OUT: got graph with %d edges\n", (int)connectivity.size());
-
-  int maxWrite = 5;
-
-  for (const std::pair<long, Eigen::Vector2i>& p : connectivity) {
-    int idHost = p.first >> 32;
-    int idTarget = p.first & 0xFFFFFFFF;
-    printf("OUT: Example Edge %d -> %d has %d active and %d marg residuals\n",
-           idHost, idTarget, p.second[0], p.second[1]);
-    maxWrite--;
-    if (maxWrite == 0)
-      break;
-  }
-}
-
 void ROSOutputWrapper::publishKeyframes(std::vector<dso::FrameHessian*>& frames,
                                         bool final, dso::CalibHessian* HCalib)
 {
