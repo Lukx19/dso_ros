@@ -37,10 +37,15 @@
 #include <ros/console.h>
 #include <ros/duration.h>
 #include <ros/ros.h>
+#include <sensor_msgs/Image.h>
+#include <sensor_msgs/image_encodings.h>
 
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_datatypes.h>
 #include <tf/transform_listener.h>
+
+#include <cv_bridge/cv_bridge.h>
+#include <opencv2/core/mat.hpp>
 
 namespace dso_ros
 {
@@ -77,6 +82,8 @@ private:
   ros::Publisher dso_depht_image_pub_;
   tf::TransformListener tf_list_;
   tf::TransformBroadcaster tf_broadcast_;
+
+  size_t seq_image_;
 };
 }
 #endif  // DSO_ROS_ROS_IO_WRAPPER

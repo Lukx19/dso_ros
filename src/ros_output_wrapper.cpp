@@ -19,7 +19,8 @@ ROSOutputWrapper::ROSOutputWrapper(ros::NodeHandle& n,
   ROS_INFO_STREAM("world_frame_id = " << dso_frame_id_ << "\n");
   ROS_INFO_STREAM("camera_frame_id = " << camera_frame_id_ << "\n");
   dso_odom_pub_ = n.advertise<nav_msgs::Odometry>("odom", 5, false);
-  //  dso_depht_image_pub_ = n.advertise<>s
+  dso_depht_image_pub_ =
+      n.advertise<sensor_msgs::Image>("image_rect", 5, false);
 }
 
 ROSOutputWrapper::~ROSOutputWrapper()
@@ -149,25 +150,15 @@ bool ROSOutputWrapper::needPushDepthImage()
 void ROSOutputWrapper::pushDepthImageFloat(dso::MinimalImageF* image,
                                            dso::FrameHessian* KF)
 {
-  printf("OUT: Predicted depth for KF %d (id %d, time %f, internal frame-ID "
-         "%d). CameraToWorld:\n",
-         KF->frameID, KF->shell->incoming_id, KF->shell->timestamp,
-         KF->shell->id);
-  std::cout << KF->shell->camToWorld.matrix3x4() << "\n";
-
-  int maxWrite = 5;
-  for (int y = 0; y < image->h; y++) {
-    for (int x = 0; x < image->w; x++) {
-      if (image->at(x, y) <= 0)
-        continue;
-
-      printf("OUT: Example Idepth at pixel (%d,%d): %f.\n", x, y,
-             image->at(x, y));
-      maxWrite--;
-      if (maxWrite == 0)
-        break;
-    }
-    if (maxWrite == 0)
-      break;
-  }
+  cv::Mat image_cv(image->h, image->w, CV_32FC1, image->data);
+  image_cv.convertTo(image_cv, CV_8UC1, 255.0f);
+  cv::Mat imverted_img;
+  cv::bitwise_not(image_cv, imverted_img);
+  std_msgs::Header header;
+  header.frame_id = camera_frame_id_;
+  header.stamp = ros::Time::now();
+  header.seq = seq_image_;
+  ++seq_image_;
+  cv_bridge::CvImage bridge_img(header, "mono8", imverted_img);
+  dso_depht_image_pub_.publish(bridge_img.toImageMsg());
 }

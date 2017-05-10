@@ -88,6 +88,14 @@ void dso_ros::DsoNode::initParams()
   dso::setting_affineOptModeA = 0;
   dso::setting_affineOptModeB = 0;
 
+  dso::setting_render_display3D = false;
+  dso::setting_render_displayDepth = false;
+  dso::setting_render_displayVideo = false;
+  dso::setting_render_displayResidual = false;
+  dso::setting_render_renderWindowFrames = false;
+  dso::setting_render_plotTrackingFull = false;
+  dso::setting_render_displayCoarseTrackingFull = false;
+
   bool debug = nh_private_.param<bool>("debug", false);
   if (debug) {
     dso::setting_debugout_runquiet = true;
